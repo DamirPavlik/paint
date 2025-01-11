@@ -1,6 +1,9 @@
 const canvas = document.querySelector("canvas") as HTMLCanvasElement;
 const color = document.querySelector("#color") as HTMLInputElement;
 const thickness = document.querySelector("#thickness") as HTMLInputElement;
+const eraser = document.querySelector("#eraser") as HTMLButtonElement;
+const clear = document.querySelector("#clear") as HTMLButtonElement;
+const save = document.querySelector("#save") as HTMLButtonElement;
 const ctx = canvas.getContext("2d")!;
 
 let isDrawing: boolean = false;
@@ -45,4 +48,21 @@ color.addEventListener("change", function(e) {
 thickness.addEventListener("change", function(e) {
     const target = e.target as HTMLInputElement;
     ctx.lineWidth = Number(target.value);
-})
+});
+
+eraser.addEventListener("click", function() {
+    ctx.strokeStyle = "#fff";
+});
+
+clear.addEventListener("click", function() { 
+    ctx.clearRect(0,0, canvas.width, canvas.height);
+});
+
+save.addEventListener("click", function(e) {
+    const dataUrl = canvas.toDataURL("image/png", 1.0);
+    const a = document.createElement("a") as HTMLAnchorElement;
+    a.href = dataUrl;
+    a.download = 'untitled.png';
+    document.body.appendChild(a);
+    a.click();
+});
