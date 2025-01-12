@@ -4,36 +4,66 @@ const thickness = document.querySelector("#thickness") as HTMLInputElement;
 const eraser = document.querySelector("#eraser") as HTMLButtonElement;
 const clear = document.querySelector("#clear") as HTMLButtonElement;
 const save = document.querySelector("#save") as HTMLButtonElement;
+const undo = document.querySelector("#undo") as HTMLButtonElement;
 const ctx = canvas.getContext("2d")!;
 
 let isDrawing: boolean = false;
 let lastX: number = 0;
 let lastY: number = 0;
 
+let currentPath: number[][] = [];
+let points: number[][][] = [];
+
 ctx.strokeStyle = "#000000";
 ctx.lineWidth = 2;
 ctx.lineJoin = "round";
 ctx.lineCap = "round";
 
+function drawPaths(): void {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    points.forEach(path => {
+        if (path.length < 2) return;
+
+        ctx.beginPath();
+        ctx.moveTo(path[0][0], path[0][1]);
+        for (let i = 1; i < path.length; ++i) {
+            ctx.lineTo(path[i][0], path[i][1]);
+        }
+        ctx.stroke();
+    });
+
+    if (currentPath.length > 1) {
+        ctx.beginPath();
+        ctx.moveTo(currentPath[0][0], currentPath[0][1]);
+        for (let i = 1; i < currentPath.length; i++) {
+            ctx.lineTo(currentPath[i][0], currentPath[i][1]);
+        }
+        ctx.stroke();
+    }
+}
+
 canvas.addEventListener("mousedown", function(e) {
     isDrawing = true;
-    [lastX, lastY] = [e.offsetX, e.offsetY];
+    currentPath = [[e.offsetX, e.offsetY]];
 });
 
 canvas.addEventListener("mousemove", function(e) {
-    if (!isDrawing) {
-        return;
-    }
+    if (!isDrawing) return;
 
-    ctx.beginPath();
-    ctx.moveTo(lastX, lastY);
-    ctx.lineTo(e.offsetX, e.offsetY);
-    ctx.stroke();
-    [lastX, lastY] = [e.offsetX, e.offsetY];
+    currentPath.push([e.offsetX, e.offsetY])
+    drawPaths();
+});
+
+undo.addEventListener("click", function(e) {
+    points.pop();
+    drawPaths();
 });
 
 canvas.addEventListener("mouseup", function() {
     isDrawing = false;
+    points.push(currentPath);
+    currentPath = [];
+    drawPaths();
 });
 
 canvas.addEventListener("mouseout", function() {
