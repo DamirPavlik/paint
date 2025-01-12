@@ -42,6 +42,7 @@ canvas.addEventListener("mouseout", function() {
 
 color.addEventListener("change", function(e) {
     const target = e.target as HTMLInputElement;
+    ctx.globalCompositeOperation = "source-over";
     ctx.strokeStyle = target.value;
 });
 
@@ -50,12 +51,14 @@ thickness.addEventListener("change", function(e) {
     ctx.lineWidth = Number(target.value);
 });
 
-eraser.addEventListener("click", function() {
-    ctx.strokeStyle = "#fff";
+eraser.addEventListener("click", function(e) {
+    ctx.globalCompositeOperation = "destination-out";
+    ctx.lineWidth = Number(thickness.value);
 });
 
 clear.addEventListener("click", function() { 
     ctx.clearRect(0,0, canvas.width, canvas.height);
+    ctx.globalCompositeOperation = "source-over";
 });
 
 save.addEventListener("click", function(e) {
