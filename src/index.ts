@@ -1,3 +1,8 @@
+type PathData = {
+    shape: string;
+    points: number[][];
+}
+
 const canvas = document.querySelector("canvas") as HTMLCanvasElement;
 const color = document.querySelector("#color") as HTMLInputElement;
 const thickness = document.querySelector("#thickness") as HTMLInputElement;
@@ -6,15 +11,19 @@ const clear = document.querySelector("#clear") as HTMLButtonElement;
 const save = document.querySelector("#save") as HTMLButtonElement;
 const undo = document.querySelector("#undo") as HTMLButtonElement;
 const redo = document.querySelector("#redo") as HTMLButtonElement;
+const brushShapeSelector = document.getElementById("brushShape") as HTMLSelectElement;
+
 const ctx = canvas.getContext("2d")!;
+
+let selectedBrush: string = "circle"; 
 
 let isDrawing: boolean = false;
 let lastX: number = 0;
 let lastY: number = 0;
 
-let currentPath: number[][] = [];
-let points: number[][][] = [];
-let redoPoints: number[][][] = [];
+let currentPath: PathData = { shape: selectedBrush, points: []}
+let points: PathData[] = [];
+let redoPoints: PathData[] = [];
 
 ctx.strokeStyle = "#000000";
 ctx.lineWidth = 2;
@@ -22,38 +31,68 @@ ctx.lineJoin = "round";
 ctx.lineCap = "round";
 
 function drawPaths(): void {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    points.forEach(path => {
-        if (path.length < 2) return;
+    ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas
 
-        ctx.beginPath();
-        ctx.moveTo(path[0][0], path[0][1]);
-        for (let i = 1; i < path.length; ++i) {
-            ctx.lineTo(path[i][0], path[i][1]);
-        }
-        ctx.stroke();
+    points.forEach(({ shape, points }) => {
+        points.forEach(([x, y]) => {
+            const size = ctx.lineWidth * 5;
+            switch (shape) {
+                case "circle":
+                    drawCircle(ctx, x, y, size);
+                    break;
+                case "square":
+                    drawSquare(ctx, x, y, size);
+                    break;
+                case "triangle":
+                    drawTriangle(ctx, x, y, size);
+                    break;
+                case "heart":
+                    drawHeart(ctx, x, y, size);
+                    break;
+            }
+        });
     });
-
-    if (currentPath.length > 1) {
-        ctx.beginPath();
-        ctx.moveTo(currentPath[0][0], currentPath[0][1]);
-        for (let i = 1; i < currentPath.length; i++) {
-            ctx.lineTo(currentPath[i][0], currentPath[i][1]);
-        }
-        ctx.stroke();
-    }
 }
+
+function drawCircle(ctx: CanvasRenderingContext2D, x: number, y: number, size: number): void {
+    ctx.beginPath();
+    ctx.arc(x, y, size / 2, 0, Math.PI * 2);
+    ctx.fill();
+}
+
+brushShapeSelector.addEventListener("change", (e) => {
+    selectedBrush = (e.target as HTMLSelectElement).value;
+});
 
 canvas.addEventListener("mousedown", function(e) {
     isDrawing = true;
-    currentPath = [[e.offsetX, e.offsetY]];
+    points.push({
+        shape: selectedBrush,
+        points: [[e.offsetX, e.offsetY]]
+    })
 });
 
-canvas.addEventListener("mousemove", function(e) {
+canvas.addEventListener("mousemove", function (e) {
     if (!isDrawing) return;
 
-    currentPath.push([e.offsetX, e.offsetY])
-    drawPaths();
+    const currentPath = points[points.length - 1];
+    currentPath.points.push([e.offsetX, e.offsetY]);
+
+    const size = ctx.lineWidth * 5;
+    switch (currentPath.shape) {
+        case "circle":
+            drawCircle(ctx, e.offsetX, e.offsetY, size);
+            break;
+        case "square":
+            drawSquare(ctx, e.offsetX, e.offsetY, size);
+            break;
+        case "triangle":
+            drawTriangle(ctx, e.offsetX, e.offsetY, size);
+            break;
+        case "heart":
+            drawHeart(ctx, e.offsetX, e.offsetY, size);
+            break;
+    }
 });
 
 undo.addEventListener("click", function(e) {
@@ -61,8 +100,7 @@ undo.addEventListener("click", function(e) {
         alert("Nothing to undo");
         return;
     }
-    redoPoints.push(points[points.length - 1]);
-    points.pop();
+    redoPoints.push(points.pop()!);
     drawPaths();
 });
 
@@ -71,15 +109,14 @@ redo.addEventListener("click", function(e) {
         alert("Nothing to redo");
         return;
     }
-    points.push(redoPoints[0]);
-    redoPoints.pop();
+    points.push(redoPoints.pop()!);
     drawPaths();
 })
 
 canvas.addEventListener("mouseup", function() {
     isDrawing = false;
     points.push(currentPath);
-    currentPath = [];
+    currentPath = { shape: selectedBrush, points: [] };
     drawPaths();
 });
 
