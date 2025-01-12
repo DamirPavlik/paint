@@ -5,6 +5,7 @@ const eraser = document.querySelector("#eraser") as HTMLButtonElement;
 const clear = document.querySelector("#clear") as HTMLButtonElement;
 const save = document.querySelector("#save") as HTMLButtonElement;
 const undo = document.querySelector("#undo") as HTMLButtonElement;
+const redo = document.querySelector("#redo") as HTMLButtonElement;
 const ctx = canvas.getContext("2d")!;
 
 let isDrawing: boolean = false;
@@ -13,6 +14,7 @@ let lastY: number = 0;
 
 let currentPath: number[][] = [];
 let points: number[][][] = [];
+let redoPoints: number[][][] = [];
 
 ctx.strokeStyle = "#000000";
 ctx.lineWidth = 2;
@@ -55,9 +57,24 @@ canvas.addEventListener("mousemove", function(e) {
 });
 
 undo.addEventListener("click", function(e) {
+    if (points.length === 0) {
+        alert("Nothing to undo");
+        return;
+    }
+    redoPoints.push(points[points.length - 1]);
     points.pop();
     drawPaths();
 });
+
+redo.addEventListener("click", function(e) {
+    if (redoPoints.length === 0) {
+        alert("Nothing to redo");
+        return;
+    }
+    points.push(redoPoints[0]);
+    redoPoints.pop();
+    drawPaths();
+})
 
 canvas.addEventListener("mouseup", function() {
     isDrawing = false;
