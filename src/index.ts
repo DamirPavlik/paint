@@ -60,6 +60,12 @@ function drawCircle(ctx: CanvasRenderingContext2D, x: number, y: number, size: n
     ctx.fill();
 }
 
+function drawSquare(ctx: CanvasRenderingContext2D, x: number, y: number, size: number): void {
+    ctx.beginPath();
+    ctx.rect(x - size / 2, y - size / 2, size, size);
+    ctx.fill();
+}
+
 brushShapeSelector.addEventListener("change", (e) => {
     selectedBrush = (e.target as HTMLSelectElement).value;
 });
