@@ -66,6 +66,15 @@ function drawSquare(ctx: CanvasRenderingContext2D, x: number, y: number, size: n
     ctx.fill();
 }
 
+function drawTriangle(ctx: CanvasRenderingContext2D, x: number, y: number, size: number): void {
+    ctx.beginPath();
+    ctx.moveTo(x, y - size / 2);
+    ctx.lineTo(x - size / 2, y + size / 2);
+    ctx.lineTo(x + size / 2, y + size / 2);
+    ctx.closePath();
+    ctx.fill();
+}
+
 brushShapeSelector.addEventListener("change", (e) => {
     selectedBrush = (e.target as HTMLSelectElement).value;
 });
