@@ -75,6 +75,27 @@ function drawTriangle(ctx: CanvasRenderingContext2D, x: number, y: number, size:
     ctx.fill();
 }
 
+function drawHeart(ctx: CanvasRenderingContext2D, x: number, y: number, size: number): void {
+    const topCurveHeight = size * 0.3;
+    ctx.beginPath();
+    ctx.moveTo(x, y + size / 4);
+
+    ctx.bezierCurveTo(
+        x - size / 2, y - topCurveHeight, 
+        x - size / 2, y + size / 2,      
+        x, y + size                      
+    );
+
+    ctx.bezierCurveTo(
+        x + size / 2, y + size / 2,      
+        x + size / 2, y - topCurveHeight,
+        x, y + size / 4                 
+    );
+
+    ctx.closePath();
+    ctx.fill();
+}
+
 brushShapeSelector.addEventListener("change", (e) => {
     selectedBrush = (e.target as HTMLSelectElement).value;
 });
