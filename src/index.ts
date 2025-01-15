@@ -1,6 +1,8 @@
 type PathData = {
     shape: string;
     points: number[][];
+    thickness: number; 
+    color: string;     
 }
 
 const canvas = document.querySelector("canvas") as HTMLCanvasElement;
@@ -21,7 +23,12 @@ let isDrawing: boolean = false;
 let lastX: number = 0;
 let lastY: number = 0;
 
-let currentPath: PathData = { shape: selectedBrush, points: []}
+let currentPath: PathData = { 
+    shape: selectedBrush, 
+    points: [], 
+    thickness: ctx.lineWidth, 
+    color: ctx.strokeStyle as string 
+};
 let points: PathData[] = [];
 let redoPoints: PathData[] = [];
 
@@ -31,11 +38,14 @@ ctx.lineJoin = "round";
 ctx.lineCap = "round";
 
 function drawPaths(): void {
-    ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height); 
 
-    points.forEach(({ shape, points }) => {
+    points.forEach(({ shape, points, thickness, color }) => {
+        ctx.lineWidth = thickness; 
+        ctx.fillStyle = color; 
+
         points.forEach(([x, y]) => {
-            const size = ctx.lineWidth * 5;
+            const size = thickness * 5;
             switch (shape) {
                 case "circle":
                     drawCircle(ctx, x, y, size);
@@ -104,8 +114,10 @@ canvas.addEventListener("mousedown", function(e) {
     isDrawing = true;
     points.push({
         shape: selectedBrush,
-        points: [[e.offsetX, e.offsetY]]
-    })
+        points: [[e.offsetX, e.offsetY]],
+        thickness: ctx.lineWidth, 
+        color: ctx.strokeStyle as string, 
+    });
 });
 
 canvas.addEventListener("mousemove", function (e) {
@@ -149,10 +161,14 @@ redo.addEventListener("click", function(e) {
     drawPaths();
 })
 
-canvas.addEventListener("mouseup", function() {
+canvas.addEventListener("mouseup", function () {
     isDrawing = false;
-    points.push(currentPath);
-    currentPath = { shape: selectedBrush, points: [] };
+    currentPath = { 
+        shape: selectedBrush, 
+        points: [], 
+        thickness: ctx.lineWidth, 
+        color: ctx.strokeStyle as string 
+    };
     drawPaths();
 });
 
@@ -160,15 +176,21 @@ canvas.addEventListener("mouseout", function() {
     isDrawing = false;
 });
 
-color.addEventListener("change", function(e) {
+color.addEventListener("input", function (e) {
     const target = e.target as HTMLInputElement;
-    ctx.globalCompositeOperation = "source-over";
-    ctx.strokeStyle = target.value;
+    ctx.strokeStyle = target.value; 
+
+    currentPath = { 
+        shape: selectedBrush, 
+        points: [], 
+        thickness: ctx.lineWidth, 
+        color: target.value 
+    };
 });
 
 thickness.addEventListener("change", function(e) {
     const target = e.target as HTMLInputElement;
-    ctx.lineWidth = Number(target.value);
+    ctx.lineWidth = Number(target.value); 
 });
 
 eraser.addEventListener("click", function(e) {
