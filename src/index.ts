@@ -14,3 +14,27 @@ let selectedBrush = "circle";
 setupCanvas();
 setupCanvasEvents(canvas, ctx, points, redoPoints, selectedBrush, thickness, color);
 setupToolbarActions(ctx, canvas, points, redoPoints);
+
+// will refactor later
+const uploadImage = document.querySelector("#uploadImage") as HTMLInputElement;
+let baseImage: HTMLImageElement | null = null;
+
+uploadImage.addEventListener("change", function (e) {
+    const file = (e.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function (event) {
+        baseImage = new Image();
+        baseImage.onload = function () {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(baseImage!, 0, 0, canvas.width, canvas.height);
+
+            redoPoints.length = 0;
+        };
+        baseImage.src = event.target?.result as string;
+    };
+    reader.readAsDataURL(file);
+});
+
+export { canvas, baseImage }
