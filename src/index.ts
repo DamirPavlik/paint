@@ -124,22 +124,36 @@ canvas.addEventListener("mousemove", function (e) {
     if (!isDrawing) return;
 
     const currentPath = points[points.length - 1];
-    currentPath.points.push([e.offsetX, e.offsetY]);
+    const [lastX, lastY] = currentPath.points[currentPath.points.length - 1];
+    const currentX = e.offsetX;
+    const currentY = e.offsetY;
 
-    const size = ctx.lineWidth * 5;
-    switch (currentPath.shape) {
-        case "circle":
-            drawCircle(ctx, e.offsetX, e.offsetY, size);
-            break;
-        case "square":
-            drawSquare(ctx, e.offsetX, e.offsetY, size);
-            break;
-        case "triangle":
-            drawTriangle(ctx, e.offsetX, e.offsetY, size);
-            break;
-        case "heart":
-            drawHeart(ctx, e.offsetX, e.offsetY, size);
-            break;
+    const dx = currentX - lastX;
+    const dy = currentY - lastY;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+    const step = ctx.lineWidth; 
+
+    for (let t = 0; t <= 1; t += step / distance) {
+        const x = lastX + t * dx;
+        const y = lastY + t * dy;
+
+        currentPath.points.push([x, y]);
+
+        const size = ctx.lineWidth * 5;
+        switch (currentPath.shape) {
+            case "circle":
+                drawCircle(ctx, x, y, size);
+                break;
+            case "square":
+                drawSquare(ctx, x, y, size);
+                break;
+            case "triangle":
+                drawTriangle(ctx, x, y, size);
+                break;
+            case "heart":
+                drawHeart(ctx, x, y, size);
+                break;
+        }
     }
 });
 
@@ -200,6 +214,7 @@ eraser.addEventListener("click", function(e) {
 
 clear.addEventListener("click", function() { 
     ctx.clearRect(0,0, canvas.width, canvas.height);
+    points = [];
     ctx.globalCompositeOperation = "source-over";
 });
 
