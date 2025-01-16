@@ -1,6 +1,7 @@
 import { setupCanvas } from './canvas-setup.js';
 import { setupCanvasEvents } from './event-handlers.js';
-import { setupToolbarActions } from './toolbar-actions.js';
+import { setupKeyboardShortcuts } from './keyboard-shortcuts.js';
+import { redoHandler, setupToolbarActions, undoHandler } from './toolbar-actions.js';
 
 const canvas = document.querySelector("canvas") as HTMLCanvasElement;
 const ctx = canvas.getContext("2d")!;
@@ -14,6 +15,7 @@ let selectedBrush = "circle";
 setupCanvas();
 setupCanvasEvents(canvas, ctx, points, redoPoints, selectedBrush, thickness, color);
 setupToolbarActions(ctx, canvas, points, redoPoints);
+setupKeyboardShortcuts(undoHandler, redoHandler);
 
 // will refactor later
 const uploadImage = document.querySelector("#uploadImage") as HTMLInputElement;
@@ -37,4 +39,4 @@ uploadImage.addEventListener("change", function (e) {
     reader.readAsDataURL(file);
 });
 
-export { canvas, baseImage }
+export { canvas, baseImage, points, redoPoints }
