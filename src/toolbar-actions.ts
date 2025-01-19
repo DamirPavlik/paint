@@ -1,9 +1,25 @@
+import { ctx } from './canvas-setup.js';
 import { drawPaths } from './draw-paths.js';
+import { points, redoPoints } from './index.js';
 
 const clear = document.querySelector("#clear") as HTMLButtonElement;
 const undo = document.querySelector("#undo") as HTMLButtonElement;
 const redo = document.querySelector("#redo") as HTMLButtonElement;
 const save = document.querySelector("#save") as HTMLButtonElement;
+
+export function undoHandler() {
+    if (points.length > 0) {
+        redoPoints.push(points.pop()!);
+        drawPaths(ctx, points);
+    }
+}
+
+export function redoHandler() {
+    if (redoPoints.length > 0) {
+        points.push(redoPoints.pop()!);
+        drawPaths(ctx, points);
+    }
+}
 
 export function setupToolbarActions(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement, points: PathData[], redoPoints: PathData[]): void {
     clear.addEventListener("click", () => {
