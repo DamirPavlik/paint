@@ -1,6 +1,6 @@
 import { setupCanvas } from './canvas-setup.js';
 import { setupCanvasEvents } from './event-handlers.js';
-import setupFileUpload from './file-upload.js';
+import { setupFileUpload } from './file-upload.js';
 import { setupKeyboardShortcuts } from './keyboard-shortcuts.js';
 import { redoHandler, setupToolbarActions, undoHandler } from './toolbar-actions.js';
 
