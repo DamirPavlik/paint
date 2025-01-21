@@ -1,4 +1,4 @@
-export default function setupFileUpload(canvas: HTMLCanvasElement, ctx: any, redoPoints: any, baseImage: HTMLImageElement | null, uploadImage: HTMLInputElement) {
+export default function setupFileUpload(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, redoPoints: PathData[], baseImage: HTMLImageElement | null, uploadImage: HTMLInputElement) {
     uploadImage.addEventListener("change", function (e) {
         const file = (e.target as HTMLInputElement).files?.[0];
         if (!file) return;
