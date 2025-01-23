@@ -2,6 +2,9 @@ import { selectedBrush } from "./brush-shapes.js";
 import { drawCircle, drawSquare, drawTriangle, drawHeart } from "./brush-shapes.js";
 import { drawPaths } from './draw-paths.js';
 const brushShapeSelector = document.getElementById("brushShape");
+const eraser = document.querySelector("#eraser");
+const brush = document.querySelector("#brush");
+let color = "#000";
 let isDrawing = false;
 export function setupCanvasEvents(canvas, ctx, points, redoPoints, selectedBrush, thicknessInput, colorInput) {
     let isDrawing = false;
@@ -33,9 +36,16 @@ export function setupCanvasEvents(canvas, ctx, points, redoPoints, selectedBrush
     });
     colorInput.addEventListener("input", (e) => {
         ctx.strokeStyle = e.target.value;
+        color = e.target.value;
     });
     thicknessInput.addEventListener("change", (e) => {
         ctx.lineWidth = Number(e.target.value);
+    });
+    eraser.addEventListener("click", () => {
+        ctx.strokeStyle = "#fff";
+    });
+    brush.addEventListener("click", () => {
+        ctx.strokeStyle = color;
     });
 }
 export function handleMouseDown(ctx, points, canvas, e) {
