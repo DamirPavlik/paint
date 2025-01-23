@@ -5,6 +5,7 @@ A browser-based drawing application that allows users to draw on a canvas with v
 ## Features
 
 - **Brush Shapes**: Draw with circles, squares, triangles, and hearts.
+- **Eraser**: Erase the drawn paths.
 - **Gradient Strokes**: Customize strokes with gradient colors.
 - **Undo/Redo**: Use `Ctrl + Z` to undo and `Ctrl + Y` to redo actions.
 - **Image Upload**: Upload an image to draw on top of it.
