@@ -11,3 +11,5 @@ A browser-based drawing application that allows users to draw on a canvas with v
 - **Keyboard Shortcuts**: 
   - `Ctrl + Z`: Undo
   - `Ctrl + Y`: Redo
+---
+Deployed [here](https://damirpavlik.github.io/paint/)
