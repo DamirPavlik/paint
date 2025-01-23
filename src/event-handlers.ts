@@ -3,6 +3,9 @@ import { drawCircle, drawSquare, drawTriangle, drawHeart } from "./brush-shapes.
 import { drawPaths } from './draw-paths.js';
 
 const brushShapeSelector = document.getElementById("brushShape") as HTMLSelectElement;
+const eraser = document.querySelector("#eraser") as HTMLButtonElement;
+const brush = document.querySelector("#brush") as HTMLButtonElement;
+let color: string = "#000";
 let isDrawing: boolean = false;
 
 export function setupCanvasEvents(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, points: PathData[], redoPoints: PathData[], selectedBrush: string, thicknessInput: HTMLInputElement, colorInput: HTMLInputElement): void {
@@ -41,10 +44,19 @@ export function setupCanvasEvents(canvas: HTMLCanvasElement, ctx: CanvasRenderin
 
     colorInput.addEventListener("input", (e) => {
         ctx.strokeStyle = (e.target as HTMLInputElement).value;
+        color = (e.target as HTMLInputElement).value;
     });
 
     thicknessInput.addEventListener("change", (e) => {
         ctx.lineWidth = Number((e.target as HTMLInputElement).value);
+    });
+
+    eraser.addEventListener("click", () => {
+        ctx.strokeStyle = "#fff"
+    });
+
+    brush.addEventListener("click", () => {
+        ctx.strokeStyle = color;
     });
 }
 
