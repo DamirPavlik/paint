@@ -1,6 +1,6 @@
 import { setupCanvas } from './canvas-setup.js';
 import { setupCanvasEvents } from './event-handlers.js';
-import { setupFileUpload } from './file-upload.js';
+// import { setupFileUpload } from './file-upload.js';
 import { setupKeyboardShortcuts } from './keyboard-shortcuts.js';
 import { redoHandler, setupToolbarActions, undoHandler } from './toolbar-actions.js';
 
@@ -19,6 +19,23 @@ setupCanvas();
 setupCanvasEvents(canvas, ctx, points, redoPoints, selectedBrush, thickness, color);
 setupToolbarActions(ctx, canvas, points, redoPoints);
 setupKeyboardShortcuts(undoHandler, redoHandler);
-setupFileUpload(canvas, ctx, redoPoints, baseImage, uploadImage)
+
+uploadImage.addEventListener("change", function (e) {
+    const file = (e.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function (event) {
+        baseImage = new Image();
+        baseImage.onload = function () {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(baseImage!, 0, 0, canvas.width, canvas.height);
+
+            redoPoints.length = 0;
+        };
+        baseImage.src = event.target?.result as string;
+    };
+    reader.readAsDataURL(file);
+});
 
 export { canvas, baseImage, points, redoPoints }
